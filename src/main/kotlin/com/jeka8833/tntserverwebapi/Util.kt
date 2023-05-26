@@ -3,18 +3,17 @@ package com.jeka8833.tntserverwebapi
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.annotations.Contract
+import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.net.URL
-import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import javax.imageio.ImageIO
-import javax.imageio.ImageReader
+import kotlin.math.min
+
 
 class Util {
     companion object {
-        private const val limitFileSize = 128 * 1024 // 128 KB
-
         private val logger = LogManager.getLogger(Util::class.java)
 
         var JSON: ObjectMapper = ObjectMapper()
@@ -55,33 +54,33 @@ class Util {
 
         fun writeImageToFile(path: Path, data: String): Boolean {
             try {
-                var image: ByteArray? = null
+                var originalImage: BufferedImage? = null
                 if (data.startsWith("data:image/png;base64,") || data.startsWith("data:image/jpg;base64,")
                     || data.startsWith("data:image/jpeg;base64,")
                 ) {
                     val base64Image = data.split(",")[1]
-                    image = Base64.getDecoder().decode(base64Image)
+                    ByteArrayInputStream(Base64.getDecoder().decode(base64Image)).use { stream ->
+                        originalImage = ImageIO.read(stream)
+                    }
                 } else if (data.startsWith("http")) {
-                    image = URL(data).readBytes()
+                    originalImage = ImageIO.read(URL(data))
                 }
 
-                if (image == null) return false
+                if (originalImage == null) return false
 
-                var isPNG = false
-                val iis = ImageIO.createImageInputStream(ByteArrayInputStream(image))
-                val imageReaders: Iterator<ImageReader> = ImageIO.getImageReaders(iis)
-
-                while (imageReaders.hasNext()) {
-                    val reader: ImageReader = imageReaders.next()
-                    isPNG = reader.formatName.equals("png", true)
+                var newWidth = 64
+                var newHeight = 32
+                while ((newWidth < originalImage!!.width || newHeight < originalImage!!.height) && newWidth < 1024) {
+                    newWidth *= 2
+                    newHeight *= 2
                 }
 
-                val processedImage = ImageIO.read(ByteArrayInputStream(image))  // Always validate image
-                if (!isPNG || image.size > limitFileSize) {
-                    ImageIO.write(processedImage, "png", path.toFile())
-                } else {
-                    Files.write(path, image)
-                }
+                newWidth = min(originalImage!!.width, 46 * (newWidth / 64))
+                newHeight = min(originalImage!!.height, 22 * (newHeight / 32))
+
+                val croppedCape = originalImage!!.getSubimage(0, 0, newWidth, newHeight)
+                ImageIO.write(croppedCape, "png", path.toFile())
+
                 return true
             } catch (e: Exception) {
                 logger.warn("Fail read image", e)
