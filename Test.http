@@ -3,8 +3,13 @@ POST http://localhost:80/api/logout
 
 ### Roles
 # @no-cookie-jar
-GET http://localhost:80/api/roles
+GET http://localhost:80/api/roles?remember=true
 Authorization: Basic 6bd6e833-a80a-430e-9029-4786368811f9 6bd6e833-a80a-430e-9029-4786368811f9
+
+### Localhost login
+# @no-cookie-jar
+GET http://localhost:80/api/tempToken/login
+Authorization: Basic 6bd6e833-a80a-430e-1029-4786368811f9 dd93db25-4eff-41a8-be7d-25fafd5d0e01
 
 ### Player Modules -> Get
 # @no-cookie-jar

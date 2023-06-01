@@ -12,7 +12,7 @@ import java.util.*
 class TokenPacket : Packet {
 
     private lateinit var user: UUID
-    private lateinit var key: UUID
+    private lateinit var token: UUID
 
     override fun setUniqueID(uniqueID: Int) {
         TODO("The operation is not supported")
@@ -24,14 +24,14 @@ class TokenPacket : Packet {
 
     override fun read(stream: PacketInputStream) {
         user = stream.readUUID()
-        key = stream.readUUID()
+        token = stream.readUUID()
     }
 
     override fun clientProcess(socket: WebSocket) {
-        if (key == UUID(0, 0)) {
+        if (token == UUID(0, 0)) {
             TokenManager.removeUser(user)
         } else {
-            TokenManager.add(user, key, TokenType.USER, LocalDateTime.now().plusMinutes(5))
+            TokenManager.add(user, token, TokenType.USER, LocalDateTime.now().plusMinutes(5))
         }
     }
 }

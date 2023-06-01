@@ -53,6 +53,7 @@ class Util {
             }
 
         fun writeImageToFile(path: Path, data: String): Boolean {
+            if (data.isBlank()) return true
             try {
                 var originalImage: BufferedImage? = null
                 if (data.startsWith("data:image/png;base64,") || data.startsWith("data:image/jpg;base64,")

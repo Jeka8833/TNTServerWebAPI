@@ -27,11 +27,12 @@ class CurrentUserPages {
             if (Util.writeImageToFile(
                     GitFileController.getProjectFolder().resolve("capes/$userUUID.png"), skin.cape
                 )
-            )
+            ) {
                 Util.JSON.writeValue(
                     GitFileController.getProjectFolder().resolve("capeData/$userUUID.json").toFile(),
                     PlayerSkinDataFile(if (skin.useTNTCape) 2 else 1)
                 )
+            }
         }
 
         return "{\"errorCode\":0}"

@@ -1,5 +1,6 @@
 package com.jeka8833.tntserverwebapi.security
 
+import com.jeka8833.tntserverwebapi.security.token.TokenManager
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
@@ -68,10 +69,17 @@ class SecuritySettings {
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
             }
-            .sessionManagement { session -> session.maximumSessions(1) }
+            .sessionManagement { session ->
+                session
+                    .maximumSessions(1)
+                    .sessionRegistry(TokenManager.sessionRegistry)
+                    .expiredSessionStrategy { strategy ->
+                        strategy.response.sendError(401)
+                    }
+            }
             .rememberMe { remember ->
                 remember
-                    .tokenValiditySeconds(TimeUnit.SECONDS.toDays(7).toInt()) // 7 day
+                    .tokenValiditySeconds(TimeUnit.DAYS.toSeconds(7).toInt())
                     .rememberMeParameter("remember")
             }
             .httpBasic(Customizer.withDefaults())

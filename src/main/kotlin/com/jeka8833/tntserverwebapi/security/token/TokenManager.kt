@@ -1,12 +1,20 @@
 package com.jeka8833.tntserverwebapi.security.token
 
 import com.jeka8833.tntserverwebapi.Util
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.security.core.session.SessionInformation
+import org.springframework.security.core.session.SessionRegistry
+import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.core.userdetails.User
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
+@Component
 @EnableScheduling
 class TokenManager {
 
@@ -17,12 +25,17 @@ class TokenManager {
         val TNT_API_USER: UUID = Util.parseUUID("6bd6e833-a80a-430e-1029-4786368811f9")!!
 
         private val userSession = ConcurrentHashMap<UUID, UserToken>()
+        val sessionRegistry: SessionRegistry = SessionRegistryImpl()
 
         fun add(user: UUID, token: UUID, tokenType: TokenType) {
+            removeUser(user)
+
             userSession[user] = UserToken(token, LocalDateTime.now(), tokenType)
         }
 
         fun add(user: UUID, token: UUID, tokenType: TokenType, timeExpiration: LocalDateTime) {
+            removeUser(user)
+
             userSession[user] = UserToken(token, LocalDateTime.now(), tokenType, timeExpiration)
         }
 
@@ -38,11 +51,16 @@ class TokenManager {
         }
 
         fun removeUser(user: UUID) {
-            userSession.remove(user)
+            userSession.remove(user)?.invalidate()
         }
 
         private fun deleteAllExpired() {
-            userSession.values.removeIf { value -> value.isExpire() }
+            userSession.values.removeIf { value ->
+                val needDelete: Boolean = value.isExpire()
+                if (needDelete) value.invalidate()
+
+                return@removeIf needDelete
+            }
         }
     }
 }
