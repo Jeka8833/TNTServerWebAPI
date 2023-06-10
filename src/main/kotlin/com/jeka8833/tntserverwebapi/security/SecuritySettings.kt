@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -14,6 +15,7 @@ import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.util.concurrent.TimeUnit
 import javax.sql.DataSource
+
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +32,9 @@ class SecuritySettings {
 
     @Value("\${cors.url}")
     private lateinit var corsUrl: String
+
+    @Value("\${rememberme.key}")
+    private lateinit var rememberKey: String
 
     @Bean
     fun getDataSource(): DataSource {
@@ -79,10 +84,15 @@ class SecuritySettings {
             }
             .rememberMe { remember ->
                 remember
+                    .key(rememberKey)
                     .tokenValiditySeconds(TimeUnit.DAYS.toSeconds(7).toInt())
                     .rememberMeParameter("remember")
             }
-            .httpBasic(Customizer.withDefaults())
+            .httpBasic { basic ->
+                basic.authenticationEntryPoint { _, response, _ ->
+                    response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.reasonPhrase)
+                }
+            }
             .build()
     }
 }

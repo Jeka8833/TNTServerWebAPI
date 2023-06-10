@@ -76,8 +76,8 @@ class Util {
                     newHeight *= 2
                 }
 
-                newWidth = min(originalImage!!.width, 46 * (newWidth / 64))
-                newHeight = min(originalImage!!.height, 22 * (newHeight / 32))
+                newWidth = min(originalImage!!.width, 22 * (newWidth / 64))
+                newHeight = min(originalImage!!.height, 17 * (newHeight / 32))
 
                 val croppedCape = originalImage!!.getSubimage(0, 0, newWidth, newHeight)
                 ImageIO.write(croppedCape, "png", path.toFile())
