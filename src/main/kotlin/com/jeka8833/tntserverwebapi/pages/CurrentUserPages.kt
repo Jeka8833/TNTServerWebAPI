@@ -38,6 +38,6 @@ class CurrentUserPages {
         return "{\"errorCode\":0}"
     }
 
-    data class PlayerSkin(val useTNTCape: Boolean, val cape: String)
+    data class PlayerSkin(val useTNTCape: Boolean = true, val cape: String = "")
     data class PlayerSkinDataFile(val capePriority: Int)
 }
