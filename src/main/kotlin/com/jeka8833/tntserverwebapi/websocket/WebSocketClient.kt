@@ -6,7 +6,7 @@ import com.jeka8833.tntserverwebapi.websocket.packet.PacketOutputStream
 import com.jeka8833.tntserverwebapi.websocket.packet.packets.AuthApiPacket
 import com.jeka8833.tntserverwebapi.websocket.packet.packets.BlockModulesPacket
 import com.jeka8833.tntserverwebapi.websocket.packet.packets.ModulesStatusPacket
-import com.jeka8833.tntserverwebapi.websocket.packet.packets.TokenPacket
+import com.jeka8833.tntserverwebapi.websocket.packet.packets.TokenGeneratorPacket
 import okhttp3.*
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
@@ -25,7 +25,7 @@ class WebSocketClient : WebSocketListener() {
 
         init {
             registeredPackets.put(7.toByte(), BlockModulesPacket::class.java)
-            registeredPackets.put(12.toByte(), TokenPacket::class.java)
+            registeredPackets.put(253.toByte(), TokenGeneratorPacket::class.java)
             registeredPackets.put(254.toByte(), ModulesStatusPacket::class.java)
             registeredPackets.put(255.toByte(), AuthApiPacket::class.java)
         }

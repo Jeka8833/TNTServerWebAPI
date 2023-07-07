@@ -33,9 +33,6 @@ class SecuritySettings {
     @Value("\${cors.url}")
     private lateinit var corsUrl: String
 
-    @Value("\${rememberme.key}")
-    private lateinit var rememberKey: String
-
     @Bean
     fun getDataSource(): DataSource {
         return DataSourceBuilder.create()
@@ -84,7 +81,6 @@ class SecuritySettings {
             }
             .rememberMe { remember ->
                 remember
-                    .key(rememberKey)
                     .tokenValiditySeconds(TimeUnit.DAYS.toSeconds(7).toInt())
                     .rememberMeParameter("remember")
             }

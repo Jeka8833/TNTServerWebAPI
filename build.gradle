@@ -11,6 +11,10 @@ group = 'com.Jeka8833'
 version = '0.0.1'
 sourceCompatibility = '17'
 
+java {
+    sourceCompatibility = '17'
+}
+
 repositories {
     mavenCentral()
 }
