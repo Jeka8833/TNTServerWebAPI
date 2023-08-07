@@ -63,6 +63,7 @@ class SecuritySettings {
             .authorizeHttpRequests { authz ->
                 authz
                     .requestMatchers("/api/cape").hasAuthority("CAPE")
+                    .requestMatchers("/api/heart").hasAuthority("HEART")
                     .anyRequest().authenticated()
             }
             .logout { logout ->

@@ -1,23 +1,12 @@
 package com.jeka8833.tntserverwebapi
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.logging.log4j.LogManager
 import org.jetbrains.annotations.Contract
-import java.awt.image.BufferedImage
-import java.io.ByteArrayInputStream
-import java.net.URL
-import java.nio.file.Path
 import java.util.*
-import javax.imageio.ImageIO
-import kotlin.math.min
+import java.util.regex.Pattern
 
 
 class Util {
     companion object {
-        private val logger = LogManager.getLogger(Util::class.java)
-
-        var JSON: ObjectMapper = ObjectMapper()
-
         @Contract("null -> null")
         fun parseUUID(text: String?) = runCatching { UUID.fromString(text) }.getOrNull()
 
@@ -51,42 +40,42 @@ class Util {
                     OS.LINUX
                 } else OS.UNKNOWN
             }
+        const val COLOR_CHAR = '\u00A7'
+        private val STRIP_COLOR_PATTERN: Pattern = Pattern.compile("(?i)$COLOR_CHAR[0-9A-FK-OR]")
 
-        fun writeImageToFile(path: Path, data: String): Boolean {
-            if (data.isBlank()) return true
-            try {
-                var originalImage: BufferedImage? = null
-                if (data.startsWith("data:image/png;base64,") || data.startsWith("data:image/jpg;base64,")
-                    || data.startsWith("data:image/jpeg;base64,")
+        /**
+         * Strips the given message of all color codes
+         *
+         * @param input String to strip of color
+         * @return A copy of the input string, without any coloring
+         */
+        fun stripColor(input: String?): String? {
+            return if (input == null) {
+                null
+            } else STRIP_COLOR_PATTERN.matcher(input).replaceAll("")
+        }
+
+        /**
+         * Translates a string using an alternate color code character into a
+         * string that uses the internal ChatColor.COLOR_CODE color code
+         * character. The alternate color code character will only be replaced if
+         * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
+         *
+         * @param altColorChar The alternate color code character to replace. Ex: &
+         * @param textToTranslate Text containing the alternate color code character.
+         * @return Text containing the ChatColor.COLOR_CODE color code character.
+         */
+        fun translateAlternateColorCodes(altColorChar: Char, textToTranslate: String): String {
+            val b = textToTranslate.toCharArray()
+            for (i in 0 until b.size - 1) {
+                if ((b[i] == altColorChar || b[i] == COLOR_CHAR) &&
+                    "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1
                 ) {
-                    val base64Image = data.split(",")[1]
-                    ByteArrayInputStream(Base64.getDecoder().decode(base64Image)).use { stream ->
-                        originalImage = ImageIO.read(stream)
-                    }
-                } else if (data.startsWith("http")) {
-                    originalImage = ImageIO.read(URL(data))
+                    b[i] = COLOR_CHAR
+                    b[i + 1] = b[i + 1].lowercaseChar()
                 }
-
-                if (originalImage == null) return false
-
-                var newWidth = 64
-                var newHeight = 32
-                while ((newWidth < originalImage!!.width || newHeight < originalImage!!.height) && newWidth < 1024) {
-                    newWidth *= 2
-                    newHeight *= 2
-                }
-
-                newWidth = min(originalImage!!.width, 22 * (newWidth / 64))
-                newHeight = min(originalImage!!.height, 17 * (newHeight / 32))
-
-                val croppedCape = originalImage!!.getSubimage(0, 0, newWidth, newHeight)
-                ImageIO.write(croppedCape, "png", path.toFile())
-
-                return true
-            } catch (e: Exception) {
-                logger.warn("Fail read image", e)
             }
-            return false
+            return String(b)
         }
     }
 

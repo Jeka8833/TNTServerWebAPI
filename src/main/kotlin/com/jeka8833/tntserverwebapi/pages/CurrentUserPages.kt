@@ -1,7 +1,7 @@
 package com.jeka8833.tntserverwebapi.pages
 
 import com.jeka8833.tntserverwebapi.Util
-import com.jeka8833.tntserverwebapi.git.GitFileController
+import com.jeka8833.tntserverwebapi.git.PlayerCustomization
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -19,25 +19,47 @@ class CurrentUserPages {
 
     @ResponseBody
     @PostMapping("/api/cape")
-    fun updateCape(@RequestBody skin: PlayerSkin): String {
+    fun updateCape(@RequestBody cape: PlayerCape): String {
         val userUUID: UUID = Util.parsePlayerUUID(SecurityContextHolder.getContext().authentication.name)
             ?: return "{\"errorCode\":1, \"errorDescription\":\"Unknown user\"}"
 
-        GitFileController.addTask {
-            if (Util.writeImageToFile(
-                    GitFileController.getProjectFolder().resolve("capes/$userUUID.png"), skin.cape
-                )
-            ) {
-                Util.JSON.writeValue(
-                    GitFileController.getProjectFolder().resolve("capeData/$userUUID.json").toFile(),
-                    PlayerSkinDataFile(if (skin.useTNTCape) 2 else 1)
-                )
-            }
-        }
+        val errorCode = PlayerCustomization.editCape(userUUID, cape.cape, cape.useTNTCape)
 
-        return "{\"errorCode\":0}"
+        return "{\"errorCode\":$errorCode}"
     }
 
-    data class PlayerSkin(val useTNTCape: Boolean = true, val cape: String = "")
-    data class PlayerSkinDataFile(val capePriority: Int)
+    @ResponseBody
+    @PostMapping("/api/heart")
+    fun updateHeart(@RequestBody heart: PlayerHeart): String {
+        val userUUID: UUID = Util.parsePlayerUUID(SecurityContextHolder.getContext().authentication.name)
+            ?: return "{\"errorCode\":1, \"errorDescription\":\"Unknown user\"}"
+
+        heart.fixAnimation()
+
+        if (!heart.isValid()) return "{\"errorCode\":1, \"errorDescription\":\"Invalid parameters\"}"
+
+        val errorCode = PlayerCustomization.editHeart(userUUID, heart.textAnimation, heart.delayTime)
+
+        return "{\"errorCode\":$errorCode}"
+    }
+
+    data class PlayerCape(val useTNTCape: Boolean = true, val cape: String = "")
+    data class PlayerHeart(val textAnimation: Array<String> = emptyArray(), val delayTime: Int = Int.MAX_VALUE) {
+        fun isValid(): Boolean {
+            if (textAnimation.isEmpty() || textAnimation.size > 16) return false
+
+            textAnimation.forEach { text ->
+                if (text.length > 32 || (Util.stripColor(text)?.length ?: 0) > 8) return false
+            }
+
+            return delayTime > 0
+        }
+
+        fun fixAnimation() {
+            for (i in textAnimation.indices) {
+                textAnimation[i] = Util.translateAlternateColorCodes('&', textAnimation[i]) +
+                        Util.COLOR_CHAR + 'r'
+            }
+        }
+    }
 }
