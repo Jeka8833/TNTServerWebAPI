@@ -1,12 +1,10 @@
 package com.jeka8833.tntserverwebapi.websocket
 
+import com.jeka8833.tntserverwebapi.database.UserPrivilegeRepository
 import com.jeka8833.tntserverwebapi.websocket.packet.Packet
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketInputStream
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketOutputStream
-import com.jeka8833.tntserverwebapi.websocket.packet.packets.AuthApiPacket
-import com.jeka8833.tntserverwebapi.websocket.packet.packets.BlockModulesPacket
-import com.jeka8833.tntserverwebapi.websocket.packet.packets.ModulesStatusPacket
-import com.jeka8833.tntserverwebapi.websocket.packet.packets.TokenGeneratorPacket
+import com.jeka8833.tntserverwebapi.websocket.packet.packets.*
 import okhttp3.*
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
@@ -17,6 +15,7 @@ import org.slf4j.LoggerFactory
 class WebSocketClient : WebSocketListener() {
     companion object {
         private lateinit var serverIp: String
+        public lateinit var privilegeRepository: UserPrivilegeRepository
 
         val registeredPackets: BiMap<Byte, Class<out Packet?>> = BiMap()
 
@@ -25,6 +24,7 @@ class WebSocketClient : WebSocketListener() {
 
         init {
             registeredPackets.put(7.toByte(), BlockModulesPacket::class.java)
+            registeredPackets.put(251.toByte(), RolePacket::class.java)
             registeredPackets.put(253.toByte(), TokenGeneratorPacket::class.java)
             registeredPackets.put(254.toByte(), ModulesStatusPacket::class.java)
             registeredPackets.put(255.toByte(), AuthApiPacket::class.java)
@@ -49,8 +49,9 @@ class WebSocketClient : WebSocketListener() {
             return false
         }
 
-        fun init(webSocketUrl: String) {
+        fun init(webSocketUrl: String, privilegeRepository: UserPrivilegeRepository) {
             serverIp = webSocketUrl
+            this.privilegeRepository = privilegeRepository
 
             val thread = Thread {
                 while (!Thread.interrupted()) {
