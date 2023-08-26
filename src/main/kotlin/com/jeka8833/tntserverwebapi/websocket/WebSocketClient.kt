@@ -10,17 +10,18 @@ import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.concurrent.TimeUnit
 
 
 class WebSocketClient : WebSocketListener() {
     companion object {
         private lateinit var serverIp: String
-        public lateinit var privilegeRepository: UserPrivilegeRepository
+        lateinit var privilegeRepository: UserPrivilegeRepository
 
         val registeredPackets: BiMap<Byte, Class<out Packet?>> = BiMap()
 
         private var logger: Logger = LoggerFactory.getLogger(WebSocketClient::class.java)
-        private val client = OkHttpClient()
+        private val client = OkHttpClient.Builder().pingInterval(15, TimeUnit.SECONDS).build()
 
         init {
             registeredPackets.put(7.toByte(), BlockModulesPacket::class.java)

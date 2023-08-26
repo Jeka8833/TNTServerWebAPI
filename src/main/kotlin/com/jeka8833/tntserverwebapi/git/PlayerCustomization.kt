@@ -43,7 +43,7 @@ class PlayerCustomization {
         fun editHeart(uuid: UUID, textAnimation: Array<String>, delayTime: Int): Int {
             val capeSettingsFile = GitFileController.getProjectFolder().resolve("capeData/$uuid.json").toFile()
             var errorCode = 0
-/*
+
             GitFileController.addTask {
                 if (!editConfiguration(capeSettingsFile) { config ->
                         config.setTextAnimation(textAnimation)
@@ -52,7 +52,7 @@ class PlayerCustomization {
                     errorCode = 102
                     return@addTask
                 }
-            }*/
+            }
             return errorCode
         }
 

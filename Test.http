@@ -4,7 +4,7 @@ POST http://localhost:80/api/logout
 ### Roles
 # @no-cookie-jar
 GET http://localhost:80/api/roles?remember=true
-Authorization: Basic 6bd6e833-a80a-430e-9029-4786368811f9 6bd6e833-a80a-430e-9029-4786368811f9
+Authorization: Basic 6bd6e833-a80a-430e-9029-4786368811f9 34854505-517b-45ce-9e7a-1d5f44d45894
 
 ### Localhost login
 # @no-cookie-jar
@@ -14,13 +14,13 @@ Authorization: Basic 6bd6e833-a80a-430e-1029-4786368811f9 dd93db25-4eff-41a8-be7
 ### Player Modules -> Get
 # @no-cookie-jar
 GET http://localhost:80/api/player/6bd6e833-a80a-430e-9029-4786368811f9/modules
-Authorization: Basic 6bd6e833-a80a-430e-9029-4786368811f9 6bd6e833-a80a-430e-9029-4786368811f9
+Authorization: Basic 6bd6e833-a80a-430e-9029-4786368811f9 34854505-517b-45ce-9e7a-1d5f44d45894
 
 ### Player Modules -> Update
 # @no-cookie-jar
 PUT http://localhost:80/api/player/00000000-0000-4000-0000-000000000000/modules
 Content-Type: application/json
-Authorization: Basic 6bd6e833-a80a-430e-9029-4786368811f9 6bd6e833-a80a-430e-9029-4786368811f9
+Authorization: Basic 6bd6e833-a80a-430e-9029-4786368811f9 34854505-517b-45ce-9e7a-1d5f44d45894
 
 {
   "forceActive": 0,

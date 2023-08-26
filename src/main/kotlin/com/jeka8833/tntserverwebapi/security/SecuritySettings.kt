@@ -64,6 +64,7 @@ class SecuritySettings {
                 authz
                     .requestMatchers("/api/cape").hasAuthority("CAPE")
                     .requestMatchers("/api/heart").hasAuthority("HEART")
+                    .requestMatchers("/api/player/**").hasAuthority("PLAYER_CONTROL")
                     .anyRequest().authenticated()
             }
             .logout { logout ->
@@ -74,7 +75,7 @@ class SecuritySettings {
             }
             .sessionManagement { session ->
                 session
-                    .maximumSessions(1)
+                    .maximumSessions(50)
                     .sessionRegistry(TokenManager.sessionRegistry)
                     .expiredSessionStrategy { strategy ->
                         strategy.response.sendError(401)
