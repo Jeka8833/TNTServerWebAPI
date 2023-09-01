@@ -10,7 +10,6 @@ import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit
 
 
 class WebSocketClient : WebSocketListener() {
@@ -21,9 +20,10 @@ class WebSocketClient : WebSocketListener() {
         val registeredPackets: BiMap<Byte, Class<out Packet?>> = BiMap()
 
         private var logger: Logger = LoggerFactory.getLogger(WebSocketClient::class.java)
-        private val client = OkHttpClient.Builder().pingInterval(15, TimeUnit.SECONDS).build()
+        private val client = OkHttpClient()
 
         init {
+            registeredPackets.put(3.toByte(), PingPacket::class.java)
             registeredPackets.put(7.toByte(), BlockModulesPacket::class.java)
             registeredPackets.put(251.toByte(), RolePacket::class.java)
             registeredPackets.put(253.toByte(), TokenGeneratorPacket::class.java)
@@ -33,6 +33,7 @@ class WebSocketClient : WebSocketListener() {
 
         private var isConnect: Boolean = false
         private var timeReconnect: Long = 0
+        private var pingAt: Long = 0
 
         private var wsClient: WebSocketClient? = null
         private var socket: WebSocket? = null
@@ -57,6 +58,11 @@ class WebSocketClient : WebSocketListener() {
             val thread = Thread {
                 while (!Thread.interrupted()) {
                     try {
+                        if(isConnect && System.currentTimeMillis() > pingAt){
+                            send(PingPacket())
+                            pingAt = System.currentTimeMillis() + 15_000
+                        }
+
                         if (!isConnect && System.currentTimeMillis() > timeReconnect) {
                             connect()
                         }
