@@ -1,5 +1,6 @@
 package com.jeka8833.tntserverwebapi.websocket.packet.packets
 
+import com.jeka8833.tntserverwebapi.websocket.WebSocketClient
 import com.jeka8833.tntserverwebapi.websocket.packet.Packet
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketInputStream
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketOutputStream
@@ -20,6 +21,6 @@ class PingPacket(private var value: Long = 0) : Packet {
     }
 
     override fun clientProcess(socket: WebSocket) {
-        println("Pong")
+        WebSocketClient.timeReconnect = System.currentTimeMillis() + 60_000L
     }
 }

@@ -12,8 +12,6 @@ class LocalhostPages {
     @ResponseBody
     @GetMapping("/api/tempToken/login")
     fun register(): Array<String> {
-        WebSocketClient.setStateConnected()
-
         return SecurityContextHolder.getContext().authentication.authorities
             .map { value -> value.authority }
             .toTypedArray()

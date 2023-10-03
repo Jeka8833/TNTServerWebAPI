@@ -34,7 +34,6 @@ class LoginListener : ApplicationListener<AuthenticationSuccessEvent> {
 
             TokenType.TNTAPI -> {
                 TokenManager.removeUser(userUUID)
-                WebSocketClient.setStateConnected()
             }
         }
     }

@@ -31,9 +31,8 @@ class WebSocketClient : WebSocketListener() {
             registeredPackets.put(255.toByte(), AuthApiPacket::class.java)
         }
 
-        private var isConnect: Boolean = false
-        private var timeReconnect: Long = 0
-        private var pingAt: Long = 0
+        var timeReconnect: Long = 0
+        private var pingAt: Long = Long.MAX_VALUE
 
         private var wsClient: WebSocketClient? = null
         private var socket: WebSocket? = null
@@ -58,14 +57,12 @@ class WebSocketClient : WebSocketListener() {
             val thread = Thread {
                 while (!Thread.interrupted()) {
                     try {
-                        if(isConnect && System.currentTimeMillis() > pingAt){
+                        if (System.currentTimeMillis() > pingAt) {
                             send(PingPacket())
                             pingAt = System.currentTimeMillis() + 15_000
                         }
 
-                        if (!isConnect && System.currentTimeMillis() > timeReconnect) {
-                            connect()
-                        }
+                        connect()
 
                         Thread.sleep(5_000)
                     } catch (i: InterruptedException) {
@@ -80,12 +77,8 @@ class WebSocketClient : WebSocketListener() {
             thread.start()
         }
 
-        fun setStateConnected() {
-            isConnect = true
-        }
-
         private fun connect() {
-            if (isConnect) return
+            if (System.currentTimeMillis() < timeReconnect) return
 
             disconnect()
 
@@ -94,12 +87,13 @@ class WebSocketClient : WebSocketListener() {
             wsClient = WebSocketClient()
             socket = client.newWebSocket(request, wsClient!!)
 
-            timeReconnect = System.currentTimeMillis() + 10_000
+            timeReconnect = System.currentTimeMillis() + 60_000L
+            pingAt = System.currentTimeMillis() + 30_000L
+
+            logger.info("WebSocket connected")
         }
 
         private fun disconnect() {
-            isConnect = false
-
             socket?.close(1000, "Force close")
         }
     }
@@ -109,12 +103,10 @@ class WebSocketClient : WebSocketListener() {
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-        isConnect = false
         logger.warn("WebSocket close: $code -> $reason")
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        isConnect = false
         logger.warn("WebSocket close", t)
     }
 
