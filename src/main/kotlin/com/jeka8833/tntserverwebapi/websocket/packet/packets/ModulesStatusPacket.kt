@@ -5,7 +5,7 @@ import com.jeka8833.tntserverwebapi.websocket.packet.Packet
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketInputStream
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketOutputStream
 import okhttp3.WebSocket
-import java.util.UUID
+import java.util.*
 
 class ModulesStatusPacket : Packet {
     private var uniqueID: Int = 0

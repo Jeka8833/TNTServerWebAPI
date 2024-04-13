@@ -1,10 +1,10 @@
 package com.jeka8833.tntserverwebapi.websocket.packet.packets
 
+import com.jeka8833.tntserverwebapi.security.token.TokenManager
+import com.jeka8833.tntserverwebapi.security.token.TokenType
 import com.jeka8833.tntserverwebapi.websocket.packet.Packet
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketInputStream
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketOutputStream
-import com.jeka8833.tntserverwebapi.security.token.TokenManager
-import com.jeka8833.tntserverwebapi.security.token.TokenType
 import okhttp3.WebSocket
 import java.time.LocalDateTime
 import java.util.*

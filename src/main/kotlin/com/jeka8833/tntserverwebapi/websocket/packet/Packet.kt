@@ -1,7 +1,5 @@
 package com.jeka8833.tntserverwebapi.websocket.packet
 
-import com.jeka8833.tntserverwebapi.websocket.packet.PacketInputStream
-import com.jeka8833.tntserverwebapi.websocket.packet.PacketOutputStream
 import okhttp3.WebSocket
 import java.io.IOException
 

@@ -31,7 +31,7 @@ class SecuritySettings {
     private lateinit var databasePassword: String
 
     @Value("\${cors.url}")
-    private lateinit var corsUrl: String
+    private lateinit var corsUrl: Array<String>
 
     @Bean
     fun getDataSource(): DataSource {
@@ -45,8 +45,8 @@ class SecuritySettings {
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val conf = CorsConfiguration().applyPermitDefaultValues()
-        conf.allowedOrigins = listOf(corsUrl)
-        conf.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
+        conf.allowedOrigins = corsUrl.asList()
+        conf.allowedMethods = listOf("GET", "POST")
         conf.allowCredentials = true
 
         val source = UrlBasedCorsConfigurationSource()

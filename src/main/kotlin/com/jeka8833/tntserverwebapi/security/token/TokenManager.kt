@@ -1,14 +1,10 @@
 package com.jeka8833.tntserverwebapi.security.token
 
 import com.jeka8833.tntserverwebapi.Util
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.security.core.session.SessionInformation
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
-import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
@@ -26,12 +22,6 @@ class TokenManager {
 
         private val userSession = ConcurrentHashMap<UUID, UserToken>()
         val sessionRegistry: SessionRegistry = SessionRegistryImpl()
-
-        fun add(user: UUID, token: UUID, tokenType: TokenType) {
-            removeUser(user)
-
-            userSession[user] = UserToken(token, LocalDateTime.now(), tokenType)
-        }
 
         fun add(user: UUID, token: UUID, tokenType: TokenType, timeExpiration: LocalDateTime) {
             removeUser(user)

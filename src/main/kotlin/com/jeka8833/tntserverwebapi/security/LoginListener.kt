@@ -3,7 +3,6 @@ package com.jeka8833.tntserverwebapi.security
 import com.jeka8833.tntserverwebapi.Util
 import com.jeka8833.tntserverwebapi.security.token.TokenManager
 import com.jeka8833.tntserverwebapi.security.token.TokenType
-import com.jeka8833.tntserverwebapi.websocket.WebSocketClient
 import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent

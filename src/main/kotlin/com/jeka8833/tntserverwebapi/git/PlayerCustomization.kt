@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.net.URL
+import java.net.URI
 import java.util.*
 import java.util.function.Consumer
 import javax.imageio.ImageIO
@@ -85,7 +85,7 @@ class PlayerCustomization {
                         originalImage = ImageIO.read(stream)
                     }
                 } else if (data.startsWith("http")) {
-                    originalImage = ImageIO.read(URL(data))
+                    originalImage = ImageIO.read(URI.create(data).toURL())
                 }
 
                 if (originalImage == null) return false
