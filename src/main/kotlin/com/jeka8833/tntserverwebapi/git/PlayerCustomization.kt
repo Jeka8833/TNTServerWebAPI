@@ -57,7 +57,7 @@ class PlayerCustomization {
         }
 
         private fun editConfiguration(path: File, callback: Consumer<PlayerCustomizationPreferences>): Boolean {
-            try {
+            return try {
                 val config: PlayerCustomizationPreferences = if (!path.exists()) {
                     PlayerCustomizationPreferences()
                 } else {
@@ -66,11 +66,10 @@ class PlayerCustomization {
 
                 callback.accept(config)
                 JSON.writeValue(path, config)
-                return true
-
+                true
             } catch (_: Exception) {
+                false
             }
-            return false
         }
 
         private fun writeImageToFile(path: File, data: String): Boolean {

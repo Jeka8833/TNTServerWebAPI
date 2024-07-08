@@ -11,11 +11,12 @@ class ModulesStatusPacket : Packet {
     private var uniqueID: Int = 0
 
     private val requestedUser: UUID?
-    var playerFound = false;
+    var playerFound = false
     var currentActives: Long = 0
     var forceBlock: Long = 0
     var forceActive: Long = 0
 
+    @Suppress("unused")
     constructor() {
         this.requestedUser = null
     }

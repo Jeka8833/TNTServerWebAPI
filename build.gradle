@@ -1,23 +1,24 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    id 'org.springframework.boot' version '3.2.1'
-    id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.graalvm.buildtools.native' version '0.9.28'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.21'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.21'
+    id 'org.springframework.boot' version '3.3.1'
+    id 'io.spring.dependency-management' version '1.1.5'
+    id 'org.graalvm.buildtools.native' version '0.10.2'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.24'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.24'
 }
 
 group = 'com.Jeka8833'
 version = '0.0.1'
 
 java {
-    sourceCompatibility = '21'
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
     mavenCentral()
 }
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
@@ -25,19 +26,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-jvm
-    implementation group: 'com.squareup.okhttp3', name: 'okhttp-jvm', version: '5.0.0-alpha.12'
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '5.0.0-alpha.14'
 }
 
-tasks.withType(KotlinCompile) {
-    kotlinOptions {
-        freeCompilerArgs += '-Xjsr305=strict'
-        jvmTarget = '21'
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll '-Xjsr305=strict'
     }
 }
 
