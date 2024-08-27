@@ -10,10 +10,14 @@ import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.*
 
 
 class WebSocketClient : WebSocketListener() {
     companion object {
+
+        private lateinit var user: UUID
+        private lateinit var password: UUID
         private lateinit var serverIp: String
         lateinit var privilegeRepository: UserPrivilegeRepository
 
@@ -50,7 +54,11 @@ class WebSocketClient : WebSocketListener() {
             return false
         }
 
-        fun init(webSocketUrl: String, privilegeRepository: UserPrivilegeRepository) {
+        fun init(tntclientUser: String, tntclientPassword : String,
+                 webSocketUrl: String, privilegeRepository: UserPrivilegeRepository) {
+            user = UUID.fromString(tntclientUser)
+            password = UUID.fromString(tntclientPassword)
+
             serverIp = webSocketUrl
             this.privilegeRepository = privilegeRepository
 
@@ -99,7 +107,7 @@ class WebSocketClient : WebSocketListener() {
     }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-        send(AuthApiPacket())
+        send(AuthApiPacket(user, password))
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {

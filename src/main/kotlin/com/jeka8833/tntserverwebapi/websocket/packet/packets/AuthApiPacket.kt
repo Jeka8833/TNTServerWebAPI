@@ -1,26 +1,32 @@
 package com.jeka8833.tntserverwebapi.websocket.packet.packets
 
-import com.jeka8833.tntserverwebapi.security.token.TokenManager
-import com.jeka8833.tntserverwebapi.security.token.TokenType
 import com.jeka8833.tntserverwebapi.websocket.packet.Packet
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketInputStream
 import com.jeka8833.tntserverwebapi.websocket.packet.PacketOutputStream
 import okhttp3.WebSocket
-import java.time.LocalDateTime
 import java.util.*
 
 class AuthApiPacket : Packet {
+    private val user: UUID?
+    private val password: UUID?
+
+    constructor() {
+        this.user = null
+        this.password = null
+    }
+
+    constructor(user: UUID, password: UUID) {
+        this.user = user
+        this.password = password
+    }
+
     override fun setUniqueID(uniqueID: Int) {
         TODO("The operation is not supported")
     }
 
     override fun write(stream: PacketOutputStream) {
-        val token = UUID.randomUUID()
-
-        TokenManager.add(TokenManager.TNT_API_USER, token, TokenType.TNTAPI, LocalDateTime.now().plusMinutes(1))
-
-        stream.writeUUID(TokenManager.TNT_API_USER)
-        stream.writeUUID(token)
+        stream.writeUUID(user!!)
+        stream.writeUUID(password!!)
     }
 
     override fun read(stream: PacketInputStream) {

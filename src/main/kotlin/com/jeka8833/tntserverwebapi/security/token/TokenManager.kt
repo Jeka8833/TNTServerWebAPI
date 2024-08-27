@@ -1,6 +1,5 @@
 package com.jeka8833.tntserverwebapi.security.token
 
-import com.jeka8833.tntserverwebapi.Util
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.core.session.SessionRegistry
@@ -18,8 +17,6 @@ class TokenManager {
     fun deleteOldTokens() = deleteAllExpired()
 
     companion object {
-        val TNT_API_USER: UUID = Util.parseUUID("6bd6e833-a80a-430e-1029-4786368811f9")!!
-
         private val userSession = ConcurrentHashMap<UUID, UserToken>()
         val sessionRegistry: SessionRegistry = SessionRegistryImpl()
 

@@ -3,7 +3,7 @@ POST http://localhost:80/api/logout
 
 ### Roles
 # @no-cookie-jar
-GET http://localhost:80/api/roles?remember=true
+GET http://localhost:8080/api/roles?remember=true
 Authorization: Basic 6bd6e833-a80a-430e-9029-4786368811f9 34854505-517b-45ce-9e7a-1d5f44d45894
 
 ### Localhost login

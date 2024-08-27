@@ -22,6 +22,12 @@ class TntServerWebApiApplication {
     @Value("\${git.project.path}")
     private lateinit var gitProjectPath: String
 
+    @Value("\${websocket.user}")
+    private lateinit var tntclientUser: String
+
+    @Value("\${websocket.password}")
+    private lateinit var tntclientPassword: String
+
     @Value("\${websocket.url}")
     private lateinit var webSocketUrl: String
 
@@ -31,7 +37,7 @@ class TntServerWebApiApplication {
     @EventListener(ApplicationReadyEvent::class)
     fun doSomethingAfterStartup() {
         GitFileController.init(gitUrl, Paths.get(gitProjectPath).toAbsolutePath())
-        WebSocketClient.init(webSocketUrl, userPrivilegeRepository)
+        WebSocketClient.init(tntclientUser, tntclientPassword, webSocketUrl, userPrivilegeRepository)
     }
 }
 

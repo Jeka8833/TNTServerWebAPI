@@ -30,10 +30,6 @@ class LoginListener : ApplicationListener<AuthenticationSuccessEvent> {
             TokenType.BOT -> {
                 userToken.timeExpiration = userToken.timeCreate.plusYears(1)
             }
-
-            TokenType.TNTAPI -> {
-                TokenManager.removeUser(userUUID)
-            }
         }
     }
 }
